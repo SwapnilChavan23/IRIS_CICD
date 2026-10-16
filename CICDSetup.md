@@ -8,8 +8,10 @@ Dev instance is where all the developments will be done and I would then commit 
 
 ## Current Setup
 
-/home/DEV_Git - Is the folder where the branch of dev repo is setup. The name on GitHub for this repo is Local_Dev
-/home/TEST_Git - Is the folder where we need to setup the test branch for test repo. Name it as Local_Test on GitHub
+I have a repo on git named - IRIS_CICD which is tied to the folder /Users/home/IRIS_CICD.
+
+/Users/home/IRIS_CICD/DEV_Git - Locally running instance of IRIS dev should have this folder location as DEV branch on git
+/Users/home/IRIS_CICD/TEST_Git - Locally running instance of IRIS test should have this folder location as TEST branch on git
 
 ## Local Instances
 
