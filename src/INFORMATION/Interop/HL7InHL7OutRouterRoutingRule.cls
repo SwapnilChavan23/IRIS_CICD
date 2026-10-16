@@ -8,7 +8,7 @@ XData RuleDefinition [ XMLNamespace = "http://www.intersystems.com/rule" ]
 {
 <ruleDefinition alias="" context="EnsLib.HL7.MsgRouter.RoutingEngine" production="INFORMATION.Interop.Production">
 <ruleSet name="Sending Patient Updates to the FHIRStore" effectiveBegin="" effectiveEnd="">
-<rule name="ADTToFHIRR">
+<rule name="ADTToFHIR">
 <constraint name="docCategory" value="2.1"></constraint>
 <constraint name="source" value="HL7_PatientUpdate_In"></constraint>
 <constraint name="docName" value="ADT_A01,ADT_A03,ADT_A04,ADT_A08,ADT_A28,ADT_A31"></constraint>
