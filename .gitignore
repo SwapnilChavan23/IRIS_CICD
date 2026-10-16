@@ -1,0 +1,12 @@
+# Local secrets
+.env
+
+# Worktrees for the DEV and TEST branches (checked out inside the main folder)
+/DEV_Git/
+/TEST_Git/
+
+# Local, per-worktree VS Code connection settings
+.vscode/settings.json
+
+.DS_Store
+__pycache__/
