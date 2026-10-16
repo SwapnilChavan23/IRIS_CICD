@@ -1,0 +1,16 @@
+{
+  "folders": [
+    { "name": "DEV  (branch DEV  -> IRIS DEV :52773)", "path": "DEV_Git" },
+    { "name": "TEST (branch TEST -> IRIS TEST :52774)", "path": "TEST_Git" }
+  ],
+  "settings": {
+    "intersystems.servers": {
+      "iris-dev":  { "webServer": { "scheme": "http", "host": "localhost", "port": 52773 }, "description": "Local IRIS HealthConnect DEV" },
+      "iris-test": { "webServer": { "scheme": "http", "host": "localhost", "port": 52774 }, "description": "Local IRIS HealthConnect TEST" }
+    },
+    "objectscript.export": { "folder": "src", "addCategory": false, "map": {} },
+    "files.eol": "\n",
+    "terminal.integrated.defaultProfile.osx": "bash",
+    "git.openRepositoryInParentFolders": "always"
+  }
+}
