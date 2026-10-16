@@ -11,7 +11,7 @@
 ///   - Add this class as a Business Process
 ///   - Set FHIRTarget to the name of your HS.FHIR.DTL.Util.HC.SDA3.FHIR.Process item
 ///   - The built-in FHIR process will forward to Out_REST automatically
-Class INFORMATION.DEV.ADTToFHIRProcess Extends Ens.BusinessProcess
+Class INFORMATION.Interop.ADTToFHIRProcess Extends Ens.BusinessProcess
 {
 
 /// Name of the built-in SDA3-to-FHIR process in your production
