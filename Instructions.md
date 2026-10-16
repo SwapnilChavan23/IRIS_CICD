@@ -55,7 +55,8 @@ dashboards **stored in the USER database**. Product code mapped in from ENSLIB/H
 ## 3. One-time cutover steps
 
 Steps 1–3 were completed on 2026-10-16: branches pushed, and `INFORMATION.Interop.Production` is running on
-both DEV and TEST (see the troubleshooting table in section 5 for the issues hit). Steps 4–5 are still open.
+both DEV and TEST (see the troubleshooting table in section 5 for the issues hit). Step 5 was done the same day
+(old classes backed up, then deleted on both instances). Step 4 is still open.
 
 1. **Push the branches to GitHub** (from git bash):
    ```bash
