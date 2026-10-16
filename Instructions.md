@@ -52,7 +52,10 @@ dashboards **stored in the USER database**. Product code mapped in from ENSLIB/H
    and loaded/compiled into IRIS DEV with `./scripts/load-dev.sh`.
 8. Merged `DEV` into `TEST` locally and verified with `./scripts/deploy-test.sh --dry-run`.
 
-## 3. Remaining one-time steps (to do manually)
+## 3. One-time cutover steps
+
+Steps 1–3 were completed on 2026-10-16: branches pushed, and `INFORMATION.Interop.Production` is running on
+both DEV and TEST (see the troubleshooting table in section 5 for the issues hit). Steps 4–5 are still open.
 
 1. **Push the branches to GitHub** (from git bash):
    ```bash
@@ -134,3 +137,25 @@ git push
   delete those classes in TEST by hand after review.
 - VS Code: install the *InterSystems ObjectScript Extension Pack*; it will prompt for the password of
   `iris-dev` / `iris-test` once and store it in the macOS Keychain.
+
+### Issues hit during the initial setup (2026-10-16)
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `ErrProductionSuspendedMismatch: Production 'INFORMATION.DEV' was suspended` when starting the new production on DEV | Old production was stopped with 8 messages still queued for the disabled `BadMessageHandler` | Start the old production, Monitor → Queues → abort the stuck messages, stop it cleanly, then start the new one (or `do ##class(Ens.Director).CleanProduction()` to discard queues) |
+| `<CLASS DOES NOT EXIST> *HS.FHIRServer.Interop.HTTPOperation` on TEST | TEST's USER namespace was never activated for HealthShare Foundation, so no `HS.*` classes were mapped | Run the Foundation installer for USER on TEST (below) |
+| Installer fails with `<CLASS DOES NOT EXIST> *HS.Util.Installer.Foundation` | `iris session TEST -U HSLIB` still logs in to the account's default namespace (USER) | Run `set $namespace="HSLIB"` after logging in |
+| Installer fails with `... before HSSYS exists` | Account lacked `%All`, so HSSYS was invisible to it | Give the account `%All` on that instance (Security → Users → Roles) |
+
+Foundation activation (once per instance/namespace; DEV and TEST must match):
+```
+iris session TEST -U HSLIB
+set $namespace="HSLIB"
+do ##class(HS.Util.Installer.Foundation).Install("USER")
+halt
+```
+Success is logged in `/opt/Intersystems/IRISTEST/mgr/HS.Util.Installer.USER-<n>.log`. Afterwards recompile
+(`do $system.OBJ.Compile("INFORMATION.Interop.*","cuk")` in USER) and start the production.
+
+Keep an eye on memory: both instances run on one Mac and TEST logged repeated
+`Physical Memory is 97-98% used` paging warnings.
