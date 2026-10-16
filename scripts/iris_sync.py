@@ -110,7 +110,11 @@ def read_lines(path):
 
 
 def normalize(lines):
-    return [l.rstrip() for l in lines] if lines else lines
+    """Ignore trailing whitespace and trailing blank lines when comparing."""
+    lines = [l.rstrip() for l in lines or []]
+    while lines and not lines[-1]:
+        lines.pop()
+    return lines
 
 
 def cmd_export(iris, src):
