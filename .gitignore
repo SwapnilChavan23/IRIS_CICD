@@ -1,5 +1,6 @@
 # Local secrets
 .env
+.env.example
 
 # Worktrees for the DEV and TEST branches (checked out inside the main folder)
 /DEV_Git/
