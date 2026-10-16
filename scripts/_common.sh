@@ -8,8 +8,15 @@ BRANCH="$(git -C "$WORKTREE" rev-parse --abbrev-ref HEAD)"
 # .env lives in the main checkout (/Users/home/IRIS_CICD/.env), shared by both worktrees
 MAIN_ROOT="$(cd "$(git -C "$WORKTREE" rev-parse --git-common-dir)/.." && pwd)"
 
+# Read .env literally (no shell expansion, so passwords may contain $ ` \ etc.)
 if [[ -f "$MAIN_ROOT/.env" ]]; then
-  set -a; source "$MAIN_ROOT/.env"; set +a
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=(.*)$ ]] || continue
+    key="${BASH_REMATCH[1]}"; val="${BASH_REMATCH[2]}"
+    val="${val#"${val%%[![:space:]]*}"}"; val="${val%"${val##*[![:space:]]}"}"
+    if [[ "$val" =~ ^\"(.*)\"$ || "$val" =~ ^\'(.*)\'$ ]]; then val="${BASH_REMATCH[1]}"; fi
+    [[ -z "${!key:-}" ]] && export "$key=$val"
+  done < "$MAIN_ROOT/.env"
 fi
 
 require_branch() {

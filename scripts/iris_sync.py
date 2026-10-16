@@ -25,15 +25,17 @@ from pathlib import Path
 # Document types kept in source control.
 EXTENSIONS = {"cls", "mac", "inc", "int", "lut", "hl7", "x12", "dfi"}
 
-# Packages that are system/product code mapped into USER - never exported.
-EXCLUDED_PREFIXES = (
-    "%", "Ens.", "EnsLib.", "EnsPortal.", "CSPX.", "HS.", "HSMOD.", "HSFHIR.",
-    "INFORMATION.", "SchemaMap.", "Ens.Util.", "Ens.Rule.",
-)
+# Only documents physically stored in these databases are user code; everything
+# mapped in from ENSLIB/HSLIB/IRISLIB etc. is product code. Default: the namespace name.
+# Override with IRIS_SRC_DBS=USER,HSCUSTOM
+
+# System include/macro routines that IRIS copies into every interop namespace.
+EXCLUDED_PREFIXES = ("%", "Ens", "INFORMATION.SCHEMA.")
 
 
 class Iris:
-    def __init__(self, host, port, ns, user, password):
+    def __init__(self, host, port, ns, user, password, dbs):
+        self.dbs = dbs
         self.base = f"http://{host}:{port}/api/atelier/v1/{urllib.parse.quote(ns)}"
         token = base64.b64encode(f"{user}:{password}".encode()).decode()
         self.headers = {"Authorization": f"Basic {token}", "Content-Type": "application/json"}
@@ -58,12 +60,13 @@ class Iris:
             sys.exit(f"ERROR: cannot reach {url}: {e.reason}")
 
     def list_docs(self):
-        res = self._call("GET", "/docnames/*", query={"generated": 0, "mapped": 0})
+        res = self._call("GET", "/docnames/*", query={"generated": 0})
         names = []
         for doc in res["result"]["content"]:
             name = doc["name"]
             ext = name.rsplit(".", 1)[-1].lower()
-            if ext in EXTENSIONS and not name.startswith(EXCLUDED_PREFIXES):
+            if (doc.get("db") in self.dbs and ext in EXTENSIONS
+                    and not name.startswith(EXCLUDED_PREFIXES)):
                 names.append(name)
         return sorted(names)
 
@@ -213,8 +216,10 @@ def main():
     if missing:
         sys.exit(f"ERROR: missing environment variables: {', '.join(missing)} (see .env.example)")
 
+    ns = os.environ.get("IRIS_NS", "USER")
+    dbs = {d.strip().upper() for d in os.environ.get("IRIS_SRC_DBS", ns).split(",") if d.strip()}
     iris = Iris(os.environ.get("IRIS_HOST", "localhost"), os.environ["IRIS_PORT"],
-                os.environ.get("IRIS_NS", "USER"), os.environ["IRIS_USER"], os.environ["IRIS_PASS"])
+                ns, os.environ["IRIS_USER"], os.environ["IRIS_PASS"], dbs)
     src = workdir / "src"
     src.mkdir(exist_ok=True)
     print(f"[{args.command}] {iris.base}  <->  {src}")
