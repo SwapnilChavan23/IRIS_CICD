@@ -12,7 +12,7 @@ XData RuleDefinition [ XMLNamespace = "http://www.intersystems.com/rule" ]
 <constraint name="docCategory" value="2.1"></constraint>
 <constraint name="source" value="HL7_PatientUpdate_In"></constraint>
 <constraint name="docName" value="ADT_A01,ADT_A03,ADT_A04,ADT_A08,ADT_A28,ADT_A31"></constraint>
-<when condition="1" comment="">
+<when condition="HL7.{MSH:SENDINGFACILITY}=&quot;API&quot;" comment="">
 <send transform="" target="FHIR_SDA_Process_2"></send>
 </when>
 </rule>
