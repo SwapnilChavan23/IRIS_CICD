@@ -105,6 +105,10 @@ git merge DEV                    # or open a DEV -> TEST pull request on GitHub 
 ```
 
 **Step 5 – Deploy to IRIS TEST**
+
+> **Note:** `git push` / `git merge` only update the TEST branch – IRIS TEST does not change until you run
+> `deploy-test.sh`. If a change is in git but not visible in the TEST portal, run `./scripts/status.sh`.
+
 ```bash
 ./scripts/deploy-test.sh --dry-run   # shows new / modified documents, changes nothing
 ./scripts/deploy-test.sh             # uploads changed documents and compiles them
